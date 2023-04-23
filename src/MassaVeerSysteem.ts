@@ -1,5 +1,5 @@
 import { kg, m, m2, ms, veerconstante, constante } from "./types";
-import { Fhooke, Flw, Fzw } from "./formules.js";
+import { Fhooke, Flw, Fzw, MeanDiameter, SpringIndex, Veerconstante } from "./formules.js";
 
 export class MassaVeerSysteem {
 	public uitrekking: m;
@@ -15,12 +15,17 @@ export class MassaVeerSysteem {
 		public veerConstante: veerconstante,
 		public initHoogte: m,
 		public massaHieronder: kg,
-		public index: number
+		public index: number,
+		constante: constante
 	) {
 		this.uitrekking = 0 as m;
 		this.snelheid = 0 as ms;
 		this.hoogte = initHoogte;
 		this.blokjesOppervlakte = blokjeGrootte * blokjeGrootte as m2;
+
+		const meanDiameter = MeanDiameter(constante.veer.DO, constante.veer.DI);
+		const springIndex = SpringIndex(meanDiameter, constante.veer.DO)
+		this.veerConstante = Veerconstante(constante.veer.DO, constante.veer.sheerModulusOfElasticity, springIndex, constante.veer.Na(this.veerLengte))
 	}
 
 	updateWaarden = (constante: constante) => {

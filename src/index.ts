@@ -5,7 +5,7 @@
 
 import { appendFileSync } from "fs";
 import { MassaVeerSysteem } from "./MassaVeerSysteem.js";
-import { constante, kg, m, s, veerconstante, wrijvingsconstante, ρ } from "./types.js";
+import { Nmm2, constante, kg, m, mm, s, veerconstante, wrijvingsconstante, ρ } from "./types.js";
 
 const hoeveelheidSystemen = 30;
 const systemen: MassaVeerSysteem[] = new Array(hoeveelheidSystemen);
@@ -13,7 +13,13 @@ const systemen: MassaVeerSysteem[] = new Array(hoeveelheidSystemen);
 const constante: constante = {
 	luchtdichtheid: 1.293 as ρ,
 	wrijvingsconstante: 1.05 as wrijvingsconstante,
-	dt: 0.01 as s
+	dt: 0.01 as s,
+	veer: {
+		sheerModulusOfElasticity: 69 * Math.pow(10, 3) as Nmm2,
+		Na: (veerlengte: m) => Math.floor(veerlengte / 86.741 * 6),
+		DO: 30.556 as mm,
+		DI: 26.238 as mm
+	}
 }
 
 
@@ -37,7 +43,8 @@ for (let i = 0; i < hoeveelheidSystemen; i++) {
 		veerBeginConstante,
 		initHoogte,
 		massaHieronder,
-		i
+		i,
+		constante
 	)
 
 	initHoogte = initHoogte + blokjeGrootte + veerBeginLengte as m;

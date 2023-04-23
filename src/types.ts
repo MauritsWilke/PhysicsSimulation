@@ -11,6 +11,8 @@ export type Nmm2 = Brand<number, "newton/mm^2">;
 
 export type m2 = Brand<number, "meter^2">;
 export type ms2 = Brand<number, "m/s^2">;
+export type kgmm3 = Brand<number, "kg/mm^3">;
+export type mm2 = Brand<number, "mm^2">;
 
 export type veerconstante = Brand<number, "N/mm">;
 export type wrijvingsconstante = Brand<number, "wrijvingsconstante">;
@@ -24,6 +26,8 @@ export interface constante {
 		sheerModulusOfElasticity: Nmm2,
 		Na: (veerlengte: m) => number,
 		DO: mm,
-		DI: mm
+		DI: mm,
+		NT: (veerlengte: m) => number,
+		dichtheid: kgmm3
 	}
 }

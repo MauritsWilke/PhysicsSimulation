@@ -5,9 +5,11 @@
 
 import { appendFileSync } from "fs";
 import { MassaVeerSysteem } from "./MassaVeerSysteem.js";
-import { Nmm2, constante, kg, m, mm, s, veerconstante, wrijvingsconstante, ρ } from "./types.js";
+import { Nmm2, constante, kg, kgmm3, m, mm, s, veerconstante, wrijvingsconstante, ρ } from "./types.js";
+import { MeanDiameter, Veermassa } from "./formules.js";
 
-const hoeveelheidSystemen = 30;
+// 65 is de maximale load van de veer
+const hoeveelheidSystemen = 65;
 const systemen: MassaVeerSysteem[] = new Array(hoeveelheidSystemen);
 
 const constante: constante = {
@@ -18,43 +20,48 @@ const constante: constante = {
 		sheerModulusOfElasticity: 69 * Math.pow(10, 3) as Nmm2,
 		Na: (veerlengte: m) => Math.floor(veerlengte / 86.741 * 6),
 		DO: 30.556 as mm,
-		DI: 26.238 as mm
+		DI: 26.238 as mm,
+		NT: (veerlengte: m) => veerlengte / 86.471 * 8,
+		dichtheid: 0.00000793 as kgmm3
 	}
 }
 
 
 // # INITIATIE LOOP
-let blokjeBeginMassa = 2.702 as kg;
-let blokjeGrootte = 0.10 as m;
-let veerBeginMassa = 0.1 as kg;
+let blokjeGrootte = 0.01 as m;
+let blokjeMassa = 0.002702 as kg;
 let veerBeginLengte = 0.1 as m;
+let veerBeginMassa = 0.1 as kg;
 let veerBeginConstante = 20 as veerconstante;
 
 let initHoogte = 0 as m;
-let massaHieronder = blokjeBeginMassa + veerBeginMassa as kg;
+let massaHieronder = blokjeMassa + veerBeginMassa as kg;
 
 // Van onder naar boven
 for (let i = 0; i < hoeveelheidSystemen; i++) {
+	const meanDiameter = MeanDiameter(constante.veer.DO, constante.veer.DI);
+	const veermassa = Veermassa(constante.veer.dichtheid, constante.veer.NT(veerBeginLengte), constante.veer.DI, meanDiameter);
+	const massaVeerEnHieronder = massaHieronder + veermassa as kg;
+
 	systemen[i] = new MassaVeerSysteem(
-		blokjeBeginMassa,
+		blokjeMassa,
 		blokjeGrootte,
-		veerBeginMassa,
+		veermassa,
 		veerBeginLengte,
-		veerBeginConstante,
 		initHoogte,
-		massaHieronder,
+		massaVeerEnHieronder,
 		i,
 		constante
 	)
 
 	initHoogte = initHoogte + blokjeGrootte + veerBeginLengte as m;
-	massaHieronder = massaHieronder + blokjeBeginMassa + veerBeginMassa as kg;
+	massaHieronder = massaHieronder + blokjeMassa + veermassa as kg;
 
-	blokjeBeginMassa = blokjeBeginMassa + 0.1 as kg;
-	veerBeginMassa = veerBeginMassa + 0.1 as kg;
 	veerBeginLengte = veerBeginLengte + 0.1 as m;
 	veerBeginConstante = veerBeginConstante + 10 as veerconstante;
 }
+
+console.log(systemen[systemen.length - 1].massaHieronder);
 
 // # Loop
 const tijd = 100 as s;

@@ -6,13 +6,13 @@ export class MassaVeerSysteem {
 	public snelheid: ms;
 	public hoogte: m;
 	public blokjesOppervlakte: m2;
+	public veerConstante: veerconstante;
 
 	constructor(
 		public blokjeMassa: kg,
 		public blokjeGrootte: m,
 		public veerMassa: kg,
 		public veerLengte: m,
-		public veerConstante: veerconstante,
 		public initHoogte: m,
 		public massaHieronder: kg,
 		public index: number,
